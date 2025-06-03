@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Function & Tangent Grapher</title>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+    input, button { padding: 10px; margin: 5px 0; width: 100%; font-size: 1rem; }
+    #plot { height: 500px; }
+  </style>
+</head>
+<body>
+  <h2>Graph Function and Tangent</h2>
+  <input id="functionInput" placeholder="Enter function, e.g. x^2 + 3x">
+  <input id="xValueInput" placeholder="Enter x value, e.g. 2">
+  <button onclick="plotFunction()">Plot</button>
+  <div id="plot"></div>
+
+  <script>
+    function plotFunction() {
+      const expr = document.getElementById("functionInput").value;
+      const xVal = parseFloat(document.getElementById("xValueInput").value);
+
+      const f = math.parse(expr).compile();
+
+      const x = math.range(xVal - 10, xVal + 10, 0.1).toArray();
+      const y = x.map(xi => f.evaluate({ x: xi }));
+
+      // Derivative using math.js
+      const derivative = math.derivative(expr, 'x');
+      const df = derivative.compile();
+      const slope = df.evaluate({ x: xVal });
+      const yVal = f.evaluate({ x: xVal });
+
+      // Tangent line: y = slope * (x - x0) + y0
+      const tangentY = x.map(xi => slope * (xi - xVal) + yVal);
+
+      const trace1 = {
+        x: x,
+        y: y,
+        type: 'scatter',
+        name: 'Function'
+      };
+
+      const trace2 = {
+        x: x,
+        y: tangentY,
+        type: 'scatter',
+        name: 'Tangent Line'
+      };
+
+      Plotly.newPlot('plot', [trace1, trace2], {
+        margin: { t: 20 }
+      });
+    }
+  </script>
+</body>
+</html>
