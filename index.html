@@ -9,6 +9,7 @@
     body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
     input, button { padding: 10px; margin: 5px 0; width: 100%; font-size: 1rem; }
     #plot { height: 500px; }
+    #error { color: red; font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -16,44 +17,39 @@
   <input id="functionInput" placeholder="Enter function, e.g. x^2 + 3x">
   <input id="xValueInput" placeholder="Enter x value, e.g. 2">
   <button onclick="plotFunction()">Plot</button>
+  <div id="error"></div>
   <div id="plot"></div>
 
   <script>
     function plotFunction() {
       const expr = document.getElementById("functionInput").value;
       const xVal = parseFloat(document.getElementById("xValueInput").value);
+      const errorDiv = document.getElementById("error");
+      errorDiv.textContent = ""; // clear previous errors
 
-      const f = math.parse(expr).compile();
+      try {
+        const f = math.parse(expr).compile();
+        const derivative = math.derivative(expr, 'x').compile();
 
-      const x = math.range(xVal - 10, xVal + 10, 0.1).toArray();
-      const y = x.map(xi => f.evaluate({ x: xi }));
+        const yVal = f.evaluate({ x: xVal });
+        const slope = derivative.evaluate({ x: xVal });
 
-      // Derivative using math.js
-      const derivative = math.derivative(expr, 'x');
-      const df = derivative.compile();
-      const slope = df.evaluate({ x: xVal });
-      const yVal = f.evaluate({ x: xVal });
+        if (!isFinite(yVal) || !isFinite(slope)) {
+          throw new Error("Function or derivative is undefined at x = " + xVal);
+        }
 
-      // Tangent line: y = slope * (x - x0) + y0
-      const tangentY = x.map(xi => slope * (xi - xVal) + yVal);
+        const x = math.range(xVal - 10, xVal + 10, 0.1).toArray();
+        const y = x.map(xi => f.evaluate({ x: xi }));
+        const tangentY = x.map(xi => slope * (xi - xVal) + yVal);
 
-      const trace1 = {
-        x: x,
-        y: y,
-        type: 'scatter',
-        name: 'Function'
-      };
+        const trace1 = { x: x, y: y, type: 'scatter', name: 'Function' };
+        const trace2 = { x: x, y: tangentY, type: 'scatter', name: 'Tangent Line' };
 
-      const trace2 = {
-        x: x,
-        y: tangentY,
-        type: 'scatter',
-        name: 'Tangent Line'
-      };
-
-      Plotly.newPlot('plot', [trace1, trace2], {
-        margin: { t: 20 }
-      });
+        Plotly.newPlot('plot', [trace1, trace2], { margin: { t: 20 } });
+      } catch (err) {
+        errorDiv.textContent = "Error: " + err.message;
+        Plotly.purge('plot');
+      }
     }
   </script>
 </body>
