@@ -1,56 +1,497 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Function & Tangent Grapher</title>
-  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
-  <style>
-    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
-    input, button { padding: 10px; margin: 5px 0; width: 100%; font-size: 1rem; }
-    #plot { height: 500px; }
-    #error { color: red; font-weight: bold; margin-top: 10px; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Function & Derivative Grapher</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; font-family: Arial, sans-serif; background: #f4f6f9; color: #222;
+    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+  }
+  header {
+    margin: 20px 0 10px;
+    font-weight: bold; font-size: 1.4rem;
+  }
+  #input-area {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 900px;
+  }
+  .input-group {
+    display: flex; flex-direction: column; min-width: 150px;
+  }
+  label {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  input[type=text], input[type=number] {
+    padding: 0.3rem 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+  }
+  button {
+    background-color: #2a9df4;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    height: fit-content;
+    align-self: center;
+    margin-top: auto;
+  }
+  button:hover {
+    background-color: #2380d6;
+  }
+  main {
+    display: flex;
+    gap: 1rem;
+    width: 95vw;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  #summary-container {
+    max-width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    font-size: 1rem;
+    min-width: 220px;
+  }
+  .summary-box {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+  }
+  .summary-box h3 {
+    margin-top: 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.6rem;
+    text-align: center;
+  }
+  #plot {
+    flex: 1 1 600px;
+    min-width: 600px;
+    max-width: 720px;
+    height: 480px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgb(0 0 0 / 0.1);
+  }
+  @media (max-width: 950px) {
+    main {
+      flex-direction: column;
+      align-items: center;
+    }
+    #plot {
+      min-width: 90vw;
+      max-width: 90vw;
+      height: 400px;
+    }
+    #summary-container {
+      max-width: 90vw;
+      min-width: auto;
+      flex-direction: row;
+      justify-content: center;
+    }
+    .summary-box {
+      flex: 1;
+      margin: 0 0.5rem;
+    }
+  }
+</style>
 </head>
 <body>
-  <h2>Graph Your Derivative</h2>
-  <input id="functionInput" placeholder="Enter a function">
-  <input id="xValueInput" placeholder="Enter x value">
-  <button onclick="plotFunction()">Plot</button>
-  <div id="error"></div>
-  <div id="plot"></div>
 
-  <script>
-    function plotFunction() {
-      const expr = document.getElementById("functionInput").value;
-      const xVal = parseFloat(document.getElementById("xValueInput").value);
-      const errorDiv = document.getElementById("error");
-      errorDiv.textContent = ""; // clear previous errors
+<header>Function & Derivative Grapher</header>
 
+<div id="input-area" aria-label="Input controls">
+  <div class="input-group">
+    <label for="function-input">Function f(x)</label>
+    <input type="text" id="function-input" placeholder="e.g. x^3 + 2*x - 5" aria-describedby="function-help" autocomplete="off" />
+    <small id="function-help" style="color:#666;">Use variable: x</small>
+  </div>
+
+  <div class="input-group">
+    <label for="point-input">Point x</label>
+    <input type="number" id="point-input" step="any" placeholder="e.g. 1.5" />
+  </div>
+
+  <div class="input-group">
+    <label for="interval-start">Interval Start</label>
+    <input type="number" id="interval-start" step="any" placeholder="e.g. 1" />
+  </div>
+
+  <div class="input-group">
+    <label for="interval-end">Interval End</label>
+    <input type="number" id="interval-end" step="any" placeholder="e.g. 2" />
+  </div>
+
+  <button id="plot-button" aria-label="Plot the function and rates of change">Plot</button>
+</div>
+
+<main>
+  <section id="summary-container" aria-label="Derivative summaries">
+    <article class="summary-box" id="instantaneous-summary" tabindex="0" aria-live="polite" aria-atomic="true">
+      <h3>Instantaneous Rate of Change</h3>
+      <p>Enter values and click Plot.</p>
+    </article>
+    <article class="summary-box" id="average-summary" tabindex="0" aria-live="polite" aria-atomic="true">
+      <h3>Average Rate of Change</h3>
+      <p>Enter interval and click Plot.</p>
+    </article>
+  </section>
+
+  <div id="plot" role="img" aria-label="Graph of the function and tangent and secant lines"></div>
+</main>
+
+<script>
+(() => {
+  const plotDiv = document.getElementById('plot');
+  const funcInput = document.getElementById('function-input');
+  const pointInput = document.getElementById('point-input');
+  const intervalStartInput = document.getElementById('interval-start');
+  const intervalEndInput = document.getElementById('interval-end');
+  const plotBtn = document.getElementById('plot-button');
+  const instSummary = document.getElementById('instantaneous-summary');
+  const avgSummary = document.getElementById('average-summary');
+
+  // Pre-compile to avoid repeat compilation overhead.
+  let compiledFunction = null;
+  let compiledDerivative = null;
+
+  // Utility: safely parse user function into mathjs expression and derivative
+  function compileFunction(expr) {
+    try {
+      const node = math.parse(expr);
+      const derivativeNode = math.derivative(node, 'x');
+      const compiledFn = node.compile();
+      const compiledDer = derivativeNode.compile();
+      return { compiledFn, compiledDer };
+    } catch (err) {
+      return null;
+    }
+  }
+
+  // Generate x array with N points from start to end inclusive
+  function linspace(start, end, N) {
+    if (N <= 1) return [start];
+    const step = (end - start) / (N - 1);
+    const arr = [];
+    for (let i = 0; i < N; i++) {
+      arr.push(start + i * step);
+    }
+    return arr;
+  }
+
+  // Evaluate f(x) for array xs safely, catch errors on individual points
+  function evaluateFunction(compiled, xs) {
+    return xs.map((x) => {
       try {
-        const f = math.parse(expr).compile();
-        const derivative = math.derivative(expr, 'x').compile();
+        const val = compiled.evaluate({ x });
+        if (typeof val === 'number' && isFinite(val)) return val;
+        return NaN;
+      } catch {
+        return NaN;
+      }
+    });
+  }
 
-        const yVal = f.evaluate({ x: xVal });
-        const slope = derivative.evaluate({ x: xVal });
+  // Clamp interval inputs to avoid NaN or weird results
+  function validInterval(a, b) {
+    if (typeof a !== 'number' || typeof b !== 'number' || isNaN(a) || isNaN(b)) return false;
+    return a !== b;
+  }
 
-        if (!isFinite(yVal) || !isFinite(slope)) {
-          throw new Error("Function or derivative is undefined at x = " + xVal);
-        }
+  // Compose readable summaries
+  function makeInstantaneousSummary(x, slope) {
+    if (isNaN(slope)) return 'Could not calculate derivative at this point.';
+    return `At x = ${x.toFixed(4)}, the instantaneous rate of change (derivative) of the function is approximately <strong>${slope.toFixed(5)}</strong>. This represents the slope of the tangent line, indicating how fast the function value is changing exactly at this point.`;
+  }
 
-        const x = math.range(xVal - 10, xVal + 10, 0.1).toArray();
-        const y = x.map(xi => f.evaluate({ x: xi }));
-        const tangentY = x.map(xi => slope * (xi - xVal) + yVal);
+  function makeAverageSummary(x1, x2, avgRate) {
+    if (isNaN(avgRate)) return 'Could not calculate average rate of change over this interval.';
+    return `Over the interval [${x1.toFixed(4)}, ${x2.toFixed(4)}], the average rate of change of the function is approximately <strong>${avgRate.toFixed(5)}</strong>. This corresponds to the slope of the secant line connecting the points on the graph at the interval’s endpoints.`;
+  }
 
-        const trace1 = { x: x, y: y, type: 'scatter', name: 'Function' };
-        const trace2 = { x: x, y: tangentY, type: 'scatter', name: 'Tangent Line' };
+  // Main plot function
+  function plotFunction() {
+    const funcExpr = funcInput.value.trim();
+    if (!funcExpr) {
+      alert('Please enter a function of x.');
+      return;
+    }
+    const xPoint = parseFloat(pointInput.value);
+    if (isNaN(xPoint)) {
+      alert('Please enter a valid number for the point x.');
+      return;
+    }
 
-        Plotly.newPlot('plot', [trace1, trace2], { margin: { t: 20 } });
-      } catch (err) {
-        errorDiv.textContent = "Error: " + err.message;
-        Plotly.purge('plot');
+    const intervalStart = parseFloat(intervalStartInput.value);
+    const intervalEnd = parseFloat(intervalEndInput.value);
+    const hasValidInterval = validInterval(intervalStart, intervalEnd);
+
+    // Compile the user function and its derivative
+    const compiled = compileFunction(funcExpr);
+    if (!compiled) {
+      alert('Invalid function expression. Please check your syntax and use variable "x".');
+      return;
+    }
+    const { compiledFn, compiledDer } = compiled;
+
+    // Prepare x-range for plotting the function:
+    // Choose a window centered around the user point or interval
+    // Use 500 points for smoothness
+    // Find visible x-range:
+    let xMin, xMax;
+    if (hasValidInterval) {
+      xMin = Math.min(intervalStart, intervalEnd);
+      xMax = Math.max(intervalStart, intervalEnd);
+    } else {
+      xMin = xPoint - 5;
+      xMax = xPoint + 5;
+    }
+
+    // Extend domain a bit
+    const domainExtra = (xMax - xMin) * 0.15;
+    xMin -= domainExtra;
+    xMax += domainExtra;
+
+    const xs = linspace(xMin, xMax, 500);
+    const ys = evaluateFunction(compiledFn, xs);
+
+    // Calculate y at xPoint and derivative there
+    let yPoint, slopeAtPoint;
+    try {
+      yPoint = compiledFn.evaluate({ x: xPoint });
+      slopeAtPoint = compiledDer.evaluate({ x: xPoint });
+      if (!isFinite(yPoint) || !isFinite(slopeAtPoint)) throw new Error();
+    } catch {
+      yPoint = NaN;
+      slopeAtPoint = NaN;
+    }
+
+    // Prepare tangent line data at xPoint (for plotting a line segment centered at xPoint)
+    // We pick a small segment in x around xPoint for tangent
+    const tanSpan = (xMax - xMin) * 0.15;
+    const tanX = linspace(xPoint - tanSpan / 2, xPoint + tanSpan / 2, 100);
+    const tanY = tanX.map(x => slopeAtPoint * (x - xPoint) + yPoint);
+
+    // Average rate of change calculation and secant line plot if interval valid:
+    let avgRate = NaN;
+    let secX = [], secY = [];
+    if (hasValidInterval) {
+      // Calculate average rate: [f(b) - f(a)] / (b - a)
+      let fa, fb;
+      try {
+        fa = compiledFn.evaluate({ x: intervalStart });
+        fb = compiledFn.evaluate({ x: intervalEnd });
+        if (!isFinite(fa) || !isFinite(fb)) throw new Error();
+      } catch {
+        fa = NaN;
+        fb = NaN;
+      }
+      if (isNaN(fa) || isNaN(fb)) {
+        avgRate = NaN;
+      } else {
+        avgRate = (fb - fa) / (intervalEnd - intervalStart);
+        // Secant line points between intervalStart and intervalEnd
+        secX = linspace(intervalStart, intervalEnd, 100);
+        secY = secX.map(x => avgRate * (x - intervalStart) + fa);
       }
     }
-  </script>
+
+    // Update summaries
+    instSummary.innerHTML = `<h3>Instantaneous Rate of Change</h3><p>${makeInstantaneousSummary(xPoint, slopeAtPoint)}</p>`;
+    if (hasValidInterval)
+      avgSummary.innerHTML = `<h3>Average Rate of Change</h3><p>${makeAverageSummary(intervalStart, intervalEnd, avgRate)}</p>`;
+    else
+      avgSummary.innerHTML = `<h3>Average Rate of Change</h3><p>Enter a valid interval and click Plot to see average rate of change.</p>`;
+
+    // Plot all traces:
+    const traces = [
+      {
+        x: xs, y: ys,
+        mode: 'lines',
+        name: 'f(x)',
+        line: { color: '#1f77b4' },
+        hoverinfo: 'x+y',
+        hoverlabel: { namelength: 0 }
+      },
+      {
+        x: tanX, y: tanY,
+        mode: 'lines',
+        name: `Tangent at x=${xPoint}`,
+        line: { color: '#d62728', width: 3, dash: 'dashdot' },
+        hoverinfo: 'x+y',
+        hoverlabel: { namelength: 0 }
+      },
+      // Reference point dot for tangent
+      {
+        x: [xPoint], y: [yPoint],
+        mode: 'markers',
+        name: 'Tangent Point',
+        marker: { color: '#d62728', size: 8 },
+        hoverinfo: 'x+y'
+      }
+    ];
+
+    if (hasValidInterval && !isNaN(avgRate)) {
+      traces.push(
+        {
+          x: secX, y: secY,
+          mode: 'lines',
+          name: `Secant on [${intervalStart},${intervalEnd}]`,
+          line: { color: '#2ca02c', width: 3, dash: 'dot' },
+          hoverinfo: 'x+y',
+          hoverlabel: { namelength: 0 }
+        },
+        // Reference points for secant line at interval ends
+        {
+          x: [intervalStart, intervalEnd],
+          y: [compiledFn.evaluate({ x: intervalStart }), compiledFn.evaluate({ x: intervalEnd })],
+          mode: 'markers',
+          name: 'Secant Interval Points',
+          marker: { color: '#2ca02c', size: 8 },
+          hoverinfo: 'x+y'
+        }
+      );
+    }
+
+    const layout = {
+      title: {
+        text: `Graph of f(x) and Rate of Change Lines`,
+        font: { size: 18 },
+      },
+      showlegend: true,
+      legend: { orientation: 'h', y: -0.2 },
+      margin: { t: 50, b: 40, l: 60, r: 40 },
+      xaxis: {
+        title: 'x',
+        zeroline: true,
+        zerolinewidth: 1,
+        zerolinecolor: '#bbb',
+        showspikes:true,
+        spikecolor: '#bbb',
+        spikemode: 'across',
+        spikesnap: 'cursor',
+        showline: true,
+        linewidth: 1,
+        mirror: true,
+      },
+      yaxis: {
+        title: 'f(x)',
+        zeroline: true,
+        zerolinewidth: 1,
+        zerolinecolor: '#bbb',
+        showspikes:true,
+        spikecolor: '#bbb',
+        spikemode: 'across',
+        spikesnap: 'cursor',
+        showline: true,
+        linewidth: 1,
+        mirror: true,
+      },
+      hovermode: 'x unified',
+      height: 480,
+      autosize: true,
+      // Add annotations to label tangent and secant lines:
+      annotations: []
+    };
+
+    // Add tangent annotation
+    if (!isNaN(slopeAtPoint) && isFinite(yPoint)) {
+      layout.annotations.push({
+        x: xPoint,
+        y: yPoint,
+        xshift: 10,
+        yshift: -10,
+        text: `Tangent (slope ≈ ${slopeAtPoint.toFixed(3)})`,
+        font: { color: '#d62728', size: 14, weight: 'bold' },
+        showarrow: true,
+        arrowhead: 2,
+        arrowsize: 1,
+        arrowcolor: '#d62728',
+        ax: 40,
+        ay: -40,
+        bgcolor: '#ffe8e8',
+        bordercolor: '#d62728',
+        borderwidth: 1,
+        borderpad: 4,
+        opacity: 0.85
+      });
+    }
+    if (hasValidInterval && !isNaN(avgRate)) {
+      // Label secant line near mid interval
+      const midX = (intervalStart + intervalEnd) / 2;
+      const midY = avgRate * (midX - intervalStart) + compiledFn.evaluate({ x: intervalStart });
+      layout.annotations.push({
+        x: midX,
+        y: midY,
+        xshift: -15,
+        yshift: 20,
+        text: `Secant (avg slope ≈ ${avgRate.toFixed(3)})`,
+        font: { color: '#2ca02c', size: 14, weight: 'bold' },
+        showarrow: true,
+        arrowhead: 2,
+        arrowsize: 1,
+        arrowcolor: '#2ca02c',
+        ax: -50,
+        ay: 40,
+        bgcolor: '#e8ffe8',
+        bordercolor: '#2ca02c',
+        borderwidth: 1,
+        borderpad: 4,
+        opacity: 0.85
+      });
+    }
+
+    Plotly.newPlot(plotDiv, traces, layout, { responsive: true, displayModeBar: true });
+  }
+
+  plotBtn.addEventListener('click', () => {
+    try {
+      plotFunction();
+    } catch (ex) {
+      alert('Error plotting: ' + ex.message);
+    }
+  });
+
+  // Accessibility: Enter key on input fields triggers plot
+  [funcInput, pointInput, intervalStartInput, intervalEndInput].forEach(input => {
+    input.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        plotBtn.click();
+      }
+    });
+  });
+
+  // Initialize with example values
+  funcInput.value = 'x^3 - 3*x + 1';
+  pointInput.value = '1';
+  intervalStartInput.value = '0';
+  intervalEndInput.value = '2';
+  plotFunction(); 
+})();
+</script>
+
 </body>
 </html>
