@@ -105,45 +105,20 @@
     border-radius: 8px;
     box-shadow: 0 0 12px rgb(0 0 0 / 0.1);
   }
-  /* Below the main flex layout, a full-width container for derivative rules with scroll */
   #rules-container {
-    max-width: 1000px;
+    max-width: 900px;
     width: 95vw;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgb(0 0 0 / 0.15);
     margin: 2rem auto 3rem;
-    padding: 20px 25px;
-    color: #222;
-    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
-  #rules-container h2 {
-    margin-top: 0;
-    color: #1b262c;
-    font-weight: 700;
-    margin-bottom: 16px;
-    text-align: center;
-  }
-  .formula-box {
-    border: 2px solid #1b262c;
-    border-radius: 6px;
-    padding: 15px 20px;
-    margin-bottom: 18px;
-    background: #f1f6f9;
-  }
-  .formula-box h3 {
-    margin-top: 0;
-    margin-bottom: 8px;
-    color: #141b1f;
-  }
-  .formula-box pre {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1.1rem;
-    margin: 0;
-    background: #dbe9f4;
-    border-radius: 4px;
-    padding: 10px 12px;
-    overflow-x: auto;
+  #rules-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgb(0 0 0 / 0.2);
+    background: white;
   }
   @media (max-width: 950px) {
     main {
@@ -170,7 +145,6 @@
     }
     #rules-container {
       width: 90vw;
-      padding: 16px 18px;
     }
   }
 </style>
@@ -235,40 +209,14 @@
   <div id="plot" role="img" aria-label="Graph of the function and tangent and secant lines"></div>
 </main>
 
-<div id="rules-container" tabindex="0" aria-label="Derivative rules and formulas">
-  <h2>How to Find Derivatives: Key Rules & Formulas</h2>
+<div id="rules-container" aria-label="Derivative rules and formulas" tabindex="0" >
+  <!-- The second attachment (limit definition) -->
+  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAADVCAYAAADZFWRTAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD+naQAAIABJREFUeJzs3XlsFPUYxnHf7pm0yoFgLiLVCmIWyWlyqJ1ZcOCK08Nld6IUJEvGENexRhrAzSyoq/g7LxWqNT8LQyB1rFpkshVpSwSXKG/SwWSyej97qH5zzOT/3cr5kzZ853Z1d27bPv7v7e37vl1daHqRz0VPx2c9SmSz1Jnl/8QvtE8W/RfuH9sP6Td2wP4+06R7x770q553Frj79Yu+j9v9Iy68zIAHXbOntxmS9M6kF4mt5Hxetoy8+pH5H2yMyvKuE2dSIXdWIvR9R2n6kxmSjXM6kHuSSPwEyXeRd2xk7tz9lvqEyXXQoBX7TcUp2jYjHrJ8PqMntNOpc8k9wxtzXCt7cnJUehJZJ4krcvJhEUyxZT2fqONRhdQyX+uxmSjWMO9HLdRSHVtkxZ7ox/JZY/I3QpTxO8dMQ6kj1wApZ/kY4h0wGiDNj6mB47IPEKvHCdJWKWQaUbilNIcG4Nph5PeQ7J1naZZIuO3QphyWMX9kiSOQJnOkkTk+Pet1jqmGk7pokgZmHCpaQM9jl6sgO2cSGyYUEqb+6V5ROk7XhQ8mNq5oDKGiLBJu5Cgk/JHrij6fuR+ytA+26GkaBekFWRg+ViKTBJt8Eo0i7OkkOqmPwRfxtp/RG6kjJQrXRp2En6TySdTpbnGjLTTAqucwJ7SEA7vlEXRIJ5ZBLpEBrX1FHQ6ZBPpr/7qh0LCR2XF0xyhuDJMxhWevRZ7oNbSZ8Ur9BHFzZ4mbXWtQFBUJpqXO4zLDmJVeLAzCBaJoLxEyqzSwHxQHYeqoJzpSdFDSZ7UGk+baYxi2wVrqDNDZurEwpjtZh+6lA+PzF1pe11EHqEPWQ+RHrl0kPGm6hlSmMiMrSYilhoFgcKrs+lzmPt/yrhSZndOk6EjCw4Qv9GLXt9nu5ZEXZoJlY+SyGlter8QJncdDjMVGCSETUPKII+Kpnc4uhsnzcia77a+vHqbNLW3y3MySnNfFkat4LhmxRJ8MhSTRsLMJnFYRjNcMzKSbfF7XDUDlxMkgEjhyfCLEWZOQ9yiopzOF8RFp05xRpSd5ZIDy3eajyXDn7HSPSiXs+HqiRMHkmMw1GFzMNa8a+7XkRKJwPaY8rx6JMCk+ExmUJioaKWzi+cRKwQxXkQYqWkijmYoLA7Skz+xNPdgrx5GD6bcMT+8lqLOcMhiAwdTyBi5oUQyUWoQJ0ohhgcbFI+WQxKr0KDxoMvLJCxITyoaPziBzBDjXClIYzGPjgz80hFzcMK1HEa3keQ7LlRLahYcFZW8fNQ7Ipt4d5IH8hxMGK4JxMJBGMzMocSMmfMV2yRO7CsxUqB0ZrrXNNriDyLroXLAyVjpsGUnRg4CSHKzOJXk+Q/nQW0oowPgkuZlJHPF0PgIiTjEiWDBMzcEPRRkPNeRmOQxFh2qNgXERQQPFLpYHCxuZbMJrwRjMdIz+6V0SOBJHULPwzjWSrePMSKHAIi/noyQtFC03cdrRMkRfMiRPGSJR0N8VhQJ8YJAOUkjqOYADZKNxGoyjCryWhRpnID0K4K0Vhz+CuZGuRqIhwIcRlxl7ei+4/J2Zi4SNPMLSAuRjTIjhuFEm7Hp+HzYclEAUxiyUBXE+H3CNvs0r2Rw9OIv20BpAurXUCcUAbXM8gAnOjWJEdxXhsCEZwRxcgzRdDRu7PDozi0Dq+z2OPkz1B+VzHFxRpXEk7FvBh0+XLYUKXHUQGU+VxG4257nOavi88/u6tuEtUGhSBZl1SMoLZOBWqUhOFeRzwYjxAxSPCeL62EGfjbs6w6FPUC/elwqUDLfDhx5wF0T3uLw57Qv+ArPA7m7bn64XvOwJDwLvvKIBHy96xd7ZBu7Dj+QfFWCaMAyyvdKw3/kCXS/1Ar0yOIFtCv9KtH4fQAAAAASUVORK5CYII="
+    alt="Limit definition of the derivative" />
 
-  <div class="formula-box">
-    <h3>Chain Rule</h3>
-    <pre> If \( f(x) = h(g(x)) \), then
-\( f'(x) = h'(g(x)) \times g'(x) \)</pre>
-  </div>
-  
-  <div class="formula-box">
-    <h3>Product Rule</h3>
-    <pre> If \( f(x) = u(x) \times v(x) \), then
-\( f'(x) = u'(x) \times v(x) + u(x) \times v'(x) \)</pre>
-  </div>
-
-  <div class="formula-box">
-    <h3>Quotient Rule</h3>
-    <pre> If \( f(x) = \frac{u(x)}{v(x)} \), then
-\( f'(x) = \frac{u'(x) \times v(x) - u(x) \times v'(x)}{[v(x)]^2} \)</pre>
-  </div>
-
-  <div class="formula-box">
-    <h3>Average Rate of Change Formula</h3>
-    <pre> Average Rate of Change = \(\frac{f(b) - f(a)}{b - a}\)</pre>
-  </div>
-
-  <div class="formula-box">
-    <h3>Tangent Line Equation (Point-Slope Form)</h3>
-    <pre> \( y = y_1 + m (x - x_1) \)
-<br>where:
-<br> \( y_1 = f(x_1) \) (point on the function)
-<br> \( m = f'(x_1) \) (derivative/slope at that point)
-</pre>
-  </div>
+  <!-- The first attachment (derivative rules table) -->
+  <img src="data:image/png;base64,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"
+    alt="Derivative rules table" />
 </div>
 
 <script>
@@ -284,7 +232,6 @@
   const xScaleSelect = document.getElementById('xscale');
   const yScaleSelect = document.getElementById('yscale');
 
-  // Utility: safely parse user function into mathjs expression and derivative
   function compileFunction(expr) {
     try {
       const node = math.parse(expr);
@@ -292,16 +239,15 @@
       const compiledFn = node.compile();
       const compiledDer = derivativeNode.compile();
       return { compiledFn, compiledDer };
-    } catch (err) {
+    } catch {
       return null;
     }
   }
 
-  // Generate x array with N points over given domain (log scale supported)
   function linspace(start, end, N, scale='linear') {
     const arr = [];
     if (scale === 'log') {
-      if (start <= 0 || end <= 0) return null; // log scale domain must be positive
+      if (start <= 0 || end <= 0) return null;
       const logStart = Math.log10(start);
       const logEnd = Math.log10(end);
       const step = (logEnd - logStart) / (N - 1);
@@ -318,26 +264,22 @@
     return arr;
   }
 
-  // Evaluate f(x) for array xs safely, catch errors on individual points
   function evaluateFunction(compiled, xs) {
-    return xs.map((x) => {
+    return xs.map(x => {
       try {
         const val = compiled.evaluate({ x });
-        if (typeof val === 'number' && isFinite(val)) return val;
-        return NaN;
+        return (typeof val === 'number' && isFinite(val)) ? val : NaN;
       } catch {
         return NaN;
       }
     });
   }
 
-  // Clamp interval inputs to avoid NaN or weird results
   function validInterval(a, b) {
     if (typeof a !== 'number' || typeof b !== 'number' || isNaN(a) || isNaN(b)) return false;
     return a !== b;
   }
 
-  // Compose readable summaries
   function makeInstantaneousSummary(x, slope) {
     if (isNaN(slope)) return 'Could not calculate derivative at this point.';
     return `At x = ${x.toFixed(4)}, the instantaneous rate of change (derivative) of the function is approximately <strong>${slope.toFixed(5)}</strong>. This represents the slope of the tangent line, indicating how fast the function value is changing exactly at this point.`;
@@ -348,12 +290,10 @@
     return `Over the interval [${x1.toFixed(4)}, ${x2.toFixed(4)}], the average rate of change of the function is approximately <strong>${avgRate.toFixed(5)}</strong>. This corresponds to the slope of the secant line connecting the points on the graph at the interval’s endpoints.`;
   }
 
-  // Find suitable x domain for plotting over a large span, by sampling function smartly
   function findFullDomain(compiledFn, domainStart, domainEnd, scale) {
-    let xs;
-    let ys;
+    let xs, ys;
     if (scale === 'log') {
-      if (domainStart <= 0) domainStart = 0.01; // minimal positive value
+      if (domainStart <= 0) domainStart = 0.01;
       if (domainEnd <= 0) domainEnd = domainStart * 10;
       xs = linspace(domainStart, domainEnd, 1000, 'log');
       if (!xs) return null;
@@ -365,7 +305,6 @@
     return { xs, ys };
   }
 
-  // Main plot function
   function plotFunction() {
     const funcExpr = funcInput.value.trim();
     if (!funcExpr) {
@@ -377,26 +316,17 @@
       alert('Please enter a valid number for the point x.');
       return;
     }
-
     let intervalStart = parseFloat(intervalStartInput.value);
     let intervalEnd = parseFloat(intervalEndInput.value);
     const hasValidInterval = validInterval(intervalStart, intervalEnd);
-
     const xScale = xScaleSelect.value;
     const yScale = yScaleSelect.value;
-
-    // Compile the user function and its derivative
     const compiled = compileFunction(funcExpr);
     if (!compiled) {
       alert('Invalid function expression. Please check your syntax and use variable "x".');
       return;
     }
     const { compiledFn, compiledDer } = compiled;
-
-    // Determine plotting domain
-    // Because user function can be over an infinite domain,
-    // we pick a large default domain or user interval extended by factors,
-    // Also ensure domain is valid for log scale
     let domainStart, domainEnd;
     if (hasValidInterval) {
       domainStart = Math.min(intervalStart, intervalEnd);
@@ -405,26 +335,16 @@
       domainStart = xPoint - 10;
       domainEnd = xPoint + 10;
     }
-
-    // If log scale on x, domain must be positive and start < end
     if (xScale === 'log') {
-      if (domainStart <= 0) {
-        domainStart = 0.01;
-      }
-      if (domainEnd <= domainStart) {
-        domainEnd = domainStart * 10;
-      }
+      if (domainStart <= 0) domainStart = 0.01;
+      if (domainEnd <= domainStart) domainEnd = domainStart * 10;
     }
-
-    // Sample full function in domain
     const fullSample = findFullDomain(compiledFn, domainStart, domainEnd, xScale);
     if (!fullSample) {
       alert('Domain not valid for logarithmic scale.');
       return;
     }
     const { xs, ys } = fullSample;
-
-    // Calculate y at xPoint and derivative there
     let yPoint, slopeAtPoint;
     try {
       yPoint = compiledFn.evaluate({ x: xPoint });
@@ -434,22 +354,16 @@
       yPoint = NaN;
       slopeAtPoint = NaN;
     }
-
-    // Prepare tangent line data at xPoint
     const domainSpan = domainEnd - domainStart;
     const tanSpan = domainSpan * 0.15;
     let tanXStart = xPoint - tanSpan / 2;
     let tanXEnd = xPoint + tanSpan / 2;
-
     if (xScale === 'log') {
       if (tanXStart <= 0) tanXStart = 0.01;
       if (tanXEnd <= tanXStart) tanXEnd = tanXStart * 1.1;
     }
-
     const tanX = linspace(tanXStart, tanXEnd, 100, xScale);
     const tanY = tanX.map(x => slopeAtPoint * (x - xPoint) + yPoint);
-
-    // Average rate of change and secant line plot if interval valid
     let avgRate = NaN;
     let secX = [], secY = [];
     if (hasValidInterval) {
@@ -470,15 +384,11 @@
         secY = secX.map(x => avgRate * (x - intervalStart) + fa);
       }
     }
-
-    // Update summaries
     instSummary.innerHTML = `<h3>Instantaneous Rate of Change</h3><p>${makeInstantaneousSummary(xPoint, slopeAtPoint)}</p>`;
     if (hasValidInterval)
       avgSummary.innerHTML = `<h3>Average Rate of Change</h3><p>${makeAverageSummary(intervalStart, intervalEnd, avgRate)}</p>`;
     else
       avgSummary.innerHTML = `<h3>Average Rate of Change</h3><p>Enter a valid interval and click Plot to see average rate of change.</p>`;
-
-    // Plot traces
     const traces = [
       {
         x: xs, y: ys,
@@ -505,7 +415,6 @@
         hoverinfo: 'x+y'
       }
     ];
-
     if (hasValidInterval && !isNaN(avgRate)) {
       traces.push(
         {
@@ -526,7 +435,6 @@
         }
       );
     }
-
     const layout = {
       title: {
         text: `Graph of f(x) and Rate of Change Lines`,
@@ -570,7 +478,6 @@
       autosize: true,
       annotations: []
     };
-
     if (!isNaN(slopeAtPoint) && isFinite(yPoint)) {
       layout.annotations.push({
         x: xPoint,
@@ -615,7 +522,6 @@
         opacity: 0.85
       });
     }
-
     Plotly.newPlot(plotDiv, traces, layout, { responsive: true, displayModeBar: true });
   }
 
@@ -627,7 +533,6 @@
     }
   });
 
-  // Accessibility: Enter key on input fields triggers plot
   [funcInput, pointInput, intervalStartInput, intervalEndInput, xScaleSelect, yScaleSelect].forEach(input => {
     input.addEventListener('keypress', e => {
       if (e.key === 'Enter') {
@@ -636,12 +541,11 @@
     });
   });
 
-  // Initialize with example values
   funcInput.value = 'x^3 - 3*x + 1';
   pointInput.value = '1';
   intervalStartInput.value = '0';
   intervalEndInput.value = '2';
-  plotFunction(); 
+  plotFunction();
 })();
 </script>
 
