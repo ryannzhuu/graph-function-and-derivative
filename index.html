@@ -32,6 +32,7 @@
     border-radius: 8px;
     padding: 12px 16px;
     box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+    align-items: flex-end;
   }
   .input-group {
     display: flex; flex-direction: column; min-width: 150px;
@@ -40,7 +41,7 @@
     font-weight: 600;
     margin-bottom: 0.3rem;
   }
-  input[type=text], input[type=number], select {
+  input[type=text], input[type=number] {
     padding: 0.3rem 0.5rem;
     font-size: 1rem;
     border: 1px solid #bbb;
@@ -56,8 +57,6 @@
     border-radius: 4px;
     cursor: pointer;
     height: fit-content;
-    align-self: center;
-    margin-top: auto;
     box-shadow: 0 2px 5px rgba(27, 38, 44, 0.7);
     transition: background-color 0.25s ease;
   }
@@ -142,6 +141,7 @@
     }
     #input-area {
       max-width: 90vw;
+      align-items: center;
     }
     #rules-container {
       width: 90vw;
@@ -161,62 +161,48 @@
   </div>
 
   <div class="input-group">
-    <label for="point-input">Point x</label>
+    <label for="point-input">Point x (for instantaneous rate)</label>
     <input type="number" id="point-input" step="any" placeholder="e.g. 1.5" />
   </div>
 
   <div class="input-group">
-    <label for="interval-start">Interval Start</label>
+    <label for="interval-start">Interval Start (for average rate)</label>
     <input type="number" id="interval-start" step="any" placeholder="e.g. 1" />
   </div>
 
   <div class="input-group">
-    <label for="interval-end">Interval End</label>
+    <label for="interval-end">Interval End (for average rate)</label>
     <input type="number" id="interval-end" step="any" placeholder="e.g. 2" />
   </div>
 
-  <div class="input-group">
-    <label for="xscale">X-axis Scale</label>
-    <select id="xscale" aria-label="Select scale for x-axis">
-      <option value="linear" selected>Linear</option>
-      <option value="log">Logarithmic</option>
-    </select>
-  </div>
+  <button id="toggle-mode" aria-pressed="false" aria-label="Toggle graph mode to instantaneous or average rate of change">
+    Show Average Rate of Change
+  </button>
 
-  <div class="input-group">
-    <label for="yscale">Y-axis Scale</label>
-    <select id="yscale" aria-label="Select scale for y-axis">
-      <option value="linear" selected>Linear</option>
-      <option value="log">Logarithmic</option>
-    </select>
-  </div>
-
-  <button id="plot-button" aria-label="Plot the function and rates of change">Plot</button>
+  <button id="plot-button" aria-label="Plot the function and selected rate of change">Plot</button>
 </div>
 
 <main>
   <section id="summary-container" aria-label="Derivative summaries">
-    <article class="summary-box" id="instantaneous-summary" tabindex="0" aria-live="polite" aria-atomic="true">
+    <article class="summary-box" id="instantaneous-summary" tabindex="0" aria-live="polite" aria-atomic="true" hidden>
       <h3>Instantaneous Rate of Change</h3>
       <p>Enter values and click Plot.</p>
     </article>
-    <article class="summary-box" id="average-summary" tabindex="0" aria-live="polite" aria-atomic="true">
+    <article class="summary-box" id="average-summary" tabindex="0" aria-live="polite" aria-atomic="true" hidden>
       <h3>Average Rate of Change</h3>
       <p>Enter interval and click Plot.</p>
     </article>
   </section>
 
-  <div id="plot" role="img" aria-label="Graph of the function and tangent and secant lines"></div>
+  <div id="plot" role="img" aria-label="Graph of the function and tangent or secant line"></div>
 </main>
 
 <div id="rules-container" aria-label="Derivative rules and formulas" tabindex="0" >
-  <!-- The second attachment (limit definition) -->
-  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAADVCAYAAADZFWRTAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD+naQAAIABJREFUeJzs3XlsFPUYxnHf7pm0yoFgLiLVCmIWyWlyqJ1ZcOCK08Nld6IUJEvGENexRhrAzSyoq/g7LxWqNT8LQyB1rFpkshVpSwSXKG/SwWSyej97qH5zzOT/3cr5kzZ853Z1d27bPv7v7e37vl1daHqRz0VPx2c9SmSz1Jnl/8QvtE8W/RfuH9sP6Td2wP4+06R7x770q553Frj79Yu+j9v9Iy68zIAHXbOntxmS9M6kF4mt5Hxetoy8+pH5H2yMyvKuE2dSIXdWIvR9R2n6kxmSjXM6kHuSSPwEyXeRd2xk7tz9lvqEyXXQoBX7TcUp2jYjHrJ8PqMntNOpc8k9wxtzXCt7cnJUehJZJ4krcvJhEUyxZT2fqONRhdQyX+uxmSjWMO9HLdRSHVtkxZ7ox/JZY/I3QpTxO8dMQ6kj1wApZ/kY4h0wGiDNj6mB47IPEKvHCdJWKWQaUbilNIcG4Nph5PeQ7J1naZZIuO3QphyWMX9kiSOQJnOkkTk+Pet1jqmGk7pokgZmHCpaQM9jl6sgO2cSGyYUEqb+6V5ROk7XhQ8mNq5oDKGiLBJu5Cgk/JHrij6fuR+ytA+26GkaBekFWRg+ViKTBJt8Eo0i7OkkOqmPwRfxtp/RG6kjJQrXRp2En6TySdTpbnGjLTTAqucwJ7SEA7vlEXRIJ5ZBLpEBrX1FHQ6ZBPpr/7qh0LCR2XF0xyhuDJMxhWevRZ7oNbSZ8Ur9BHFzZ4mbXWtQFBUJpqXO4zLDmJVeLAzCBaJoLxEyqzSwHxQHYeqoJzpSdFDSZ7UGk+baYxi2wVrqDNDZurEwpjtZh+6lA+PzF1pe11EHqEPWQ+RHrl0kPGm6hlSmMiMrSYilhoFgcKrs+lzmPt/yrhSZndOk6EjCw4Qv9GLXt9nu5ZEXZoJlY+SyGlter8QJncdDjMVGCSETUPKII+Kpnc4uhsnzcia77a+vHqbNLW3y3MySnNfFkat4LhmxRJ8MhSTRsLMJnFYRjNcMzKSbfF7XDUDlxMkgEjhyfCLEWZOQ9yiopzOF8RFp05xRpSd5ZIDy3eajyXDn7HSPSiXs+HqiRMHkmMw1GFzMNa8a+7XkRKJwPaY8rx6JMCk+ExmUJioaKWzi+cRKwQxXkQYqWkijmYoLA7Skz+xNPdgrx5GD6bcMT+8lqLOcMhiAwdTyBi5oUQyUWoQJ0ohhgcbFI+WQxKr0KDxoMvLJCxITyoaPziBzBDjXClIYzGPjgz80hFzcMK1HEa3keQ7LlRLahYcFZW8fNQ7Ipt4d5IH8hxMGK4JxMJBGMzMocSMmfMV2yRO7CsxUqB0ZrrXNNriDyLroXLAyVjpsGUnRg4CSHKzOJXk+Q/nQW0oowPgkuZlJHPF0PgIiTjEiWDBMzcEPRRkPNeRmOQxFh2qNgXERQQPFLpYHCxuZbMJrwRjMdIz+6V0SOBJHULPwzjWSrePMSKHAIi/noyQtFC03cdrRMkRfMiRPGSJR0N8VhQJ8YJAOUkjqOYADZKNxGoyjCryWhRpnID0K4K0Vhz+CuZGuRqIhwIcRlxl7ei+4/J2Zi4SNPMLSAuRjTIjhuFEm7Hp+HzYclEAUxiyUBXE+H3CNvs0r2Rw9OIv20BpAurXUCcUAbXM8gAnOjWJEdxXhsCEZwRxcgzRdDRu7PDozi0Dq+z2OPkz1B+VzHFxRpXEk7FvBh0+XLYUKXHUQGU+VxG4257nOavi88/u6tuEtUGhSBZl1SMoLZOBWqUhOFeRzwYjxAxSPCeL62EGfjbs6w6FPUC/elwqUDLfDhx5wF0T3uLw57Qv+ArPA7m7bn64XvOwJDwLvvKIBHy96xd7ZBu7Dj+QfFWCaMAyyvdKw3/kCXS/1Ar0yOIFtCv9KtH4fQAAAAASUVORK5CYII="
-    alt="Limit definition of the derivative" />
-
-  <!-- The first attachment (derivative rules table) -->
-  <img src="data:image/png;base64,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"
-    alt="Derivative rules table" />
+  <!-- Put the second image (limit definition) first -->
+  <img src="https://www.careerpower.in/images/differentiation-formula-12.png" alt="Limit definition of the derivative - formula" />
+  
+  <!-- Then the first image (derivative rules table) below it -->
+  <img src="https://openlab.citytech.cuny.edu/mat1475-ganguli-fall2022/files/2022/09/Screen-Shot-2022-09-28-at-3.20.18-PM.png" alt="Derivative rules table with constant, power, product, quotient, and chain rules" />
 </div>
 
 <script>
@@ -227,11 +213,30 @@
   const intervalStartInput = document.getElementById('interval-start');
   const intervalEndInput = document.getElementById('interval-end');
   const plotBtn = document.getElementById('plot-button');
+  const toggleBtn = document.getElementById('toggle-mode');
   const instSummary = document.getElementById('instantaneous-summary');
   const avgSummary = document.getElementById('average-summary');
-  const xScaleSelect = document.getElementById('xscale');
-  const yScaleSelect = document.getElementById('yscale');
 
+  // Mode: true = average rate graph, false = instantaneous rate graph (start with instantaneous)
+  let averageMode = false;
+
+  // Show/hide summaries and update toggle button text & aria-pressed
+  function updateModeUI() {
+    if(averageMode){
+      instSummary.hidden = true;
+      avgSummary.hidden = false;
+      toggleBtn.textContent = 'Show Instantaneous Rate of Change';
+      toggleBtn.setAttribute('aria-pressed', 'true');
+    } else {
+      instSummary.hidden = false;
+      avgSummary.hidden = true;
+      toggleBtn.textContent = 'Show Average Rate of Change';
+      toggleBtn.setAttribute('aria-pressed', 'false');
+    }
+  }
+  updateModeUI();
+
+  // Utility: safely parse user function into mathjs expression and derivative
   function compileFunction(expr) {
     try {
       const node = math.parse(expr);
@@ -244,26 +249,18 @@
     }
   }
 
-  function linspace(start, end, N, scale='linear') {
+  // Generate x array with N points over given domain (linear only)
+  function linspace(start, end, N) {
+    if (N <= 1) return [start];
+    const step = (end - start) / (N - 1);
     const arr = [];
-    if (scale === 'log') {
-      if (start <= 0 || end <= 0) return null;
-      const logStart = Math.log10(start);
-      const logEnd = Math.log10(end);
-      const step = (logEnd - logStart) / (N - 1);
-      for (let i = 0; i < N; i++) {
-        arr.push(Math.pow(10, logStart + i * step));
-      }
-    } else {
-      if (N <= 1) return [start];
-      const step = (end - start) / (N - 1);
-      for (let i = 0; i < N; i++) {
-        arr.push(start + i * step);
-      }
+    for (let i = 0; i < N; i++) {
+      arr.push(start + i * step);
     }
     return arr;
   }
 
+  // Evaluate f(x) for array xs safely, catch errors on individual points
   function evaluateFunction(compiled, xs) {
     return xs.map(x => {
       try {
@@ -290,154 +287,143 @@
     return `Over the interval [${x1.toFixed(4)}, ${x2.toFixed(4)}], the average rate of change of the function is approximately <strong>${avgRate.toFixed(5)}</strong>. This corresponds to the slope of the secant line connecting the points on the graph at the interval’s endpoints.`;
   }
 
-  function findFullDomain(compiledFn, domainStart, domainEnd, scale) {
-    let xs, ys;
-    if (scale === 'log') {
-      if (domainStart <= 0) domainStart = 0.01;
-      if (domainEnd <= 0) domainEnd = domainStart * 10;
-      xs = linspace(domainStart, domainEnd, 1000, 'log');
-      if (!xs) return null;
-      ys = evaluateFunction(compiledFn, xs);
-    } else {
-      xs = linspace(domainStart, domainEnd, 1000, 'linear');
-      ys = evaluateFunction(compiledFn, xs);
-    }
+  // Sample large domain for function to allow full zoom/pan
+  function sampleFunctionLargeDomain(compiledFn, domainStart, domainEnd){
+    const xs = linspace(domainStart, domainEnd, 1000);
+    const ys = evaluateFunction(compiledFn, xs);
     return { xs, ys };
   }
 
+  // Main plot function
   function plotFunction() {
     const funcExpr = funcInput.value.trim();
     if (!funcExpr) {
       alert('Please enter a function of x.');
       return;
     }
-    const xPoint = parseFloat(pointInput.value);
-    if (isNaN(xPoint)) {
-      alert('Please enter a valid number for the point x.');
-      return;
-    }
-    let intervalStart = parseFloat(intervalStartInput.value);
-    let intervalEnd = parseFloat(intervalEndInput.value);
-    const hasValidInterval = validInterval(intervalStart, intervalEnd);
-    const xScale = xScaleSelect.value;
-    const yScale = yScaleSelect.value;
     const compiled = compileFunction(funcExpr);
     if (!compiled) {
       alert('Invalid function expression. Please check your syntax and use variable "x".');
       return;
     }
     const { compiledFn, compiledDer } = compiled;
+
+    // Define big domain centered around user's point or interval or 20 units default
     let domainStart, domainEnd;
-    if (hasValidInterval) {
-      domainStart = Math.min(intervalStart, intervalEnd);
-      domainEnd = Math.max(intervalStart, intervalEnd);
+
+    if (averageMode) {
+      let intervalStart = parseFloat(intervalStartInput.value);
+      let intervalEnd = parseFloat(intervalEndInput.value);
+      if (!validInterval(intervalStart, intervalEnd)) {
+        alert('Please enter a valid interval start and end (distinct numbers) to plot average rate of change.');
+        return;
+      }
+      domainStart = intervalStart - 10;
+      domainEnd = intervalEnd + 10;
     } else {
+      let xPoint = parseFloat(pointInput.value);
+      if (isNaN(xPoint)) {
+        alert('Please enter a valid number for the point x to plot instantaneous rate of change.');
+        return;
+      }
       domainStart = xPoint - 10;
       domainEnd = xPoint + 10;
     }
-    if (xScale === 'log') {
-      if (domainStart <= 0) domainStart = 0.01;
-      if (domainEnd <= domainStart) domainEnd = domainStart * 10;
-    }
-    const fullSample = findFullDomain(compiledFn, domainStart, domainEnd, xScale);
-    if (!fullSample) {
-      alert('Domain not valid for logarithmic scale.');
-      return;
-    }
-    const { xs, ys } = fullSample;
-    let yPoint, slopeAtPoint;
-    try {
-      yPoint = compiledFn.evaluate({ x: xPoint });
-      slopeAtPoint = compiledDer.evaluate({ x: xPoint });
-      if (!isFinite(yPoint) || !isFinite(slopeAtPoint)) throw new Error();
-    } catch {
-      yPoint = NaN;
-      slopeAtPoint = NaN;
-    }
-    const domainSpan = domainEnd - domainStart;
-    const tanSpan = domainSpan * 0.15;
-    let tanXStart = xPoint - tanSpan / 2;
-    let tanXEnd = xPoint + tanSpan / 2;
-    if (xScale === 'log') {
-      if (tanXStart <= 0) tanXStart = 0.01;
-      if (tanXEnd <= tanXStart) tanXEnd = tanXStart * 1.1;
-    }
-    const tanX = linspace(tanXStart, tanXEnd, 100, xScale);
-    const tanY = tanX.map(x => slopeAtPoint * (x - xPoint) + yPoint);
-    let avgRate = NaN;
-    let secX = [], secY = [];
-    if (hasValidInterval) {
+
+    const { xs, ys } = sampleFunctionLargeDomain(compiledFn, domainStart, domainEnd);
+
+    // Plot base function trace
+    const traces = [{
+      x: xs, y: ys,
+      mode: 'lines',
+      name: 'f(x)',
+      line: { color: '#1f77b4' },
+      hoverinfo: 'x+y',
+      hoverlabel: { namelength: 0 }
+    }];
+
+    if (averageMode) {
+      // Plot average rate of change (secant) line
+      const intervalStart = parseFloat(intervalStartInput.value);
+      const intervalEnd = parseFloat(intervalEndInput.value);
+
       let fa, fb;
       try {
         fa = compiledFn.evaluate({ x: intervalStart });
         fb = compiledFn.evaluate({ x: intervalEnd });
         if (!isFinite(fa) || !isFinite(fb)) throw new Error();
       } catch {
-        fa = NaN;
-        fb = NaN;
+        alert('Could not evaluate function at interval endpoints.');
+        return;
       }
-      if (isNaN(fa) || isNaN(fb)) {
-        avgRate = NaN;
-      } else {
-        avgRate = (fb - fa) / (intervalEnd - intervalStart);
-        secX = linspace(intervalStart, intervalEnd, 100, xScale);
-        secY = secX.map(x => avgRate * (x - intervalStart) + fa);
-      }
-    }
-    instSummary.innerHTML = `<h3>Instantaneous Rate of Change</h3><p>${makeInstantaneousSummary(xPoint, slopeAtPoint)}</p>`;
-    if (hasValidInterval)
-      avgSummary.innerHTML = `<h3>Average Rate of Change</h3><p>${makeAverageSummary(intervalStart, intervalEnd, avgRate)}</p>`;
-    else
-      avgSummary.innerHTML = `<h3>Average Rate of Change</h3><p>Enter a valid interval and click Plot to see average rate of change.</p>`;
-    const traces = [
-      {
-        x: xs, y: ys,
+      const avgRate = (fb - fa) / (intervalEnd - intervalStart);
+
+      // Secant line points
+      const secX = linspace(intervalStart, intervalEnd, 100);
+      const secY = secX.map(x => avgRate * (x - intervalStart) + fa);
+
+      traces.push({
+        x: secX, y: secY,
         mode: 'lines',
-        name: 'f(x)',
-        line: { color: '#1f77b4' },
+        name: `Secant on [${intervalStart}, ${intervalEnd}]`,
+        line: { color: '#2ca02c', width: 3, dash: 'dot' },
         hoverinfo: 'x+y',
         hoverlabel: { namelength: 0 },
-        connectgaps: false
-      },
-      {
+      });
+      traces.push({
+        x: [intervalStart, intervalEnd],
+        y: [fa, fb],
+        mode: 'markers',
+        name: 'Secant Interval Points',
+        marker: { color: '#2ca02c', size: 8 },
+        hoverinfo: 'x+y'
+      });
+
+      avgSummary.innerHTML = `<h3>Average Rate of Change</h3><p>${makeAverageSummary(intervalStart, intervalEnd, avgRate)}</p>`;
+      avgSummary.hidden = false;
+      instSummary.hidden = true;
+    } else {
+      // Plot instantaneous rate of change (tangent) line
+      const xPoint = parseFloat(pointInput.value);
+      let yPoint, slopeAtPoint;
+      try {
+        yPoint = compiledFn.evaluate({ x: xPoint });
+        slopeAtPoint = compiledDer.evaluate({ x: xPoint });
+        if (!isFinite(yPoint) || !isFinite(slopeAtPoint)) throw new Error();
+      } catch {
+        alert('Could not evaluate function or derivative at the given point.');
+        return;
+      }
+
+      // Tangent line (small segment around xPoint)
+      const tanSpan = (domainEnd - domainStart) * 0.15;
+      const tanX = linspace(xPoint - tanSpan/2, xPoint + tanSpan/2, 100);
+      const tanY = tanX.map(x => slopeAtPoint * (x - xPoint) + yPoint);
+
+      traces.push({
         x: tanX, y: tanY,
         mode: 'lines',
         name: `Tangent at x=${xPoint}`,
         line: { color: '#d62728', width: 3, dash: 'dashdot' },
         hoverinfo: 'x+y',
         hoverlabel: { namelength: 0 }
-      },
-      {
+      });
+      traces.push({
         x: [xPoint], y: [yPoint],
         mode: 'markers',
         name: 'Tangent Point',
         marker: { color: '#d62728', size: 8 },
         hoverinfo: 'x+y'
-      }
-    ];
-    if (hasValidInterval && !isNaN(avgRate)) {
-      traces.push(
-        {
-          x: secX, y: secY,
-          mode: 'lines',
-          name: `Secant on [${intervalStart},${intervalEnd}]`,
-          line: { color: '#2ca02c', width: 3, dash: 'dot' },
-          hoverinfo: 'x+y',
-          hoverlabel: { namelength: 0 }
-        },
-        {
-          x: [intervalStart, intervalEnd],
-          y: [compiledFn.evaluate({ x: intervalStart }), compiledFn.evaluate({ x: intervalEnd })],
-          mode: 'markers',
-          name: 'Secant Interval Points',
-          marker: { color: '#2ca02c', size: 8 },
-          hoverinfo: 'x+y'
-        }
-      );
+      });
+
+      instSummary.innerHTML = `<h3>Instantaneous Rate of Change</h3><p>${makeInstantaneousSummary(xPoint, slopeAtPoint)}</p>`;
+      instSummary.hidden = false;
+      avgSummary.hidden = true;
     }
+
     const layout = {
       title: {
-        text: `Graph of f(x) and Rate of Change Lines`,
+        text: `Graph of f(x) and ${averageMode ? 'Secant (Average Rate)' : 'Tangent (Instantaneous Rate)'} Line`,
         font: { size: 18 },
       },
       showlegend: true,
@@ -455,7 +441,6 @@
         showline: true,
         linewidth: 1,
         mirror: true,
-        type: xScale,
         autorange: true,
       },
       yaxis: {
@@ -470,7 +455,6 @@
         showline: true,
         linewidth: 1,
         mirror: true,
-        type: yScale,
         autorange: true,
       },
       hovermode: 'x unified',
@@ -478,52 +462,14 @@
       autosize: true,
       annotations: []
     };
-    if (!isNaN(slopeAtPoint) && isFinite(yPoint)) {
-      layout.annotations.push({
-        x: xPoint,
-        y: yPoint,
-        xshift: 10,
-        yshift: -10,
-        text: `Tangent (slope ≈ ${slopeAtPoint.toFixed(3)})`,
-        font: { color: '#d62728', size: 14, weight: 'bold' },
-        showarrow: true,
-        arrowhead: 2,
-        arrowsize: 1,
-        arrowcolor: '#d62728',
-        ax: 40,
-        ay: -40,
-        bgcolor: '#ffe8e8',
-        bordercolor: '#d62728',
-        borderwidth: 1,
-        borderpad: 4,
-        opacity: 0.85
-      });
-    }
-    if (hasValidInterval && !isNaN(avgRate)) {
-      const midX = (intervalStart + intervalEnd) / 2;
-      const midY = avgRate * (midX - intervalStart) + compiledFn.evaluate({ x: intervalStart });
-      layout.annotations.push({
-        x: midX,
-        y: midY,
-        xshift: -15,
-        yshift: 20,
-        text: `Secant (avg slope ≈ ${avgRate.toFixed(3)})`,
-        font: { color: '#2ca02c', size: 14, weight: 'bold' },
-        showarrow: true,
-        arrowhead: 2,
-        arrowsize: 1,
-        arrowcolor: '#2ca02c',
-        ax: -50,
-        ay: 40,
-        bgcolor: '#e8ffe8',
-        bordercolor: '#2ca02c',
-        borderwidth: 1,
-        borderpad: 4,
-        opacity: 0.85
-      });
-    }
+
     Plotly.newPlot(plotDiv, traces, layout, { responsive: true, displayModeBar: true });
   }
+
+  toggleBtn.addEventListener('click', () => {
+    averageMode = !averageMode;
+    updateModeUI();
+  });
 
   plotBtn.addEventListener('click', () => {
     try {
@@ -533,14 +479,14 @@
     }
   });
 
-  [funcInput, pointInput, intervalStartInput, intervalEndInput, xScaleSelect, yScaleSelect].forEach(input => {
+  // Accessibility: Enter key triggers Plot button
+  [funcInput, pointInput, intervalStartInput, intervalEndInput].forEach(input => {
     input.addEventListener('keypress', e => {
-      if (e.key === 'Enter') {
-        plotBtn.click();
-      }
+      if (e.key === 'Enter') plotBtn.click();
     });
   });
 
+  // Initialize values and plot default (instantaneous)
   funcInput.value = 'x^3 - 3*x + 1';
   pointInput.value = '1';
   intervalStartInput.value = '0';
