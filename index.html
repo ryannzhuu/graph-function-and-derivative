@@ -111,6 +111,21 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+    color: black;
+  }
+  #rules-container h2 {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+  #rules-container p {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    line-height: 1.4;
+    max-width: 840px;
+    margin-left: auto;
+    margin-right: auto;
   }
   #rules-container img {
     max-width: 100%;
@@ -118,6 +133,9 @@
     border-radius: 8px;
     box-shadow: 0 0 12px rgb(0 0 0 / 0.2);
     background: white;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   }
   @media (max-width: 950px) {
     main {
@@ -198,11 +216,19 @@
 </main>
 
 <div id="rules-container" aria-label="Derivative rules and formulas" tabindex="0" >
-  <!-- Put the second image (limit definition) first -->
+  <h2>Differentiation Formulas</h2>
+  <p>To find the derivative of a function, you can use the following formulas. The first formula is the limit definition of a derivative. It uses a modified version of the slope formula to give the average rate of change of a function, when the distance between the endpoints of the interval is as close to 0 as possible - yielding the instantaneous rate of change.</p>
+
+  <!-- The limit definition image first as requested (second attachment originally) -->
   <img src="https://www.careerpower.in/images/differentiation-formula-12.png" alt="Limit definition of the derivative - formula" />
-  
-  <!-- Then the first image (derivative rules table) below it -->
+
+  <!-- Then the derivative rules table image (first attachment originally) -->
   <img src="https://openlab.citytech.cuny.edu/mat1475-ganguli-fall2022/files/2022/09/Screen-Shot-2022-09-28-at-3.20.18-PM.png" alt="Derivative rules table with constant, power, product, quotient, and chain rules" />
+
+  <h2>Average Rate of Change Formula (Slope Formula)</h2>
+  <p>To find the average rate of change over a specific interval, you can use the following formula below. You may notice that it is just the slope formula.</p>
+
+  <img src="https://i.imgur.com/nOQM0Sc.png" alt="Average rate of change formula - slope formula" />
 </div>
 
 <script>
@@ -236,7 +262,6 @@
   }
   updateModeUI();
 
-  // Utility: safely parse user function into mathjs expression and derivative
   function compileFunction(expr) {
     try {
       const node = math.parse(expr);
@@ -249,7 +274,6 @@
     }
   }
 
-  // Generate x array with N points over given domain (linear only)
   function linspace(start, end, N) {
     if (N <= 1) return [start];
     const step = (end - start) / (N - 1);
@@ -260,7 +284,6 @@
     return arr;
   }
 
-  // Evaluate f(x) for array xs safely, catch errors on individual points
   function evaluateFunction(compiled, xs) {
     return xs.map(x => {
       try {
@@ -287,14 +310,12 @@
     return `Over the interval [${x1.toFixed(4)}, ${x2.toFixed(4)}], the average rate of change of the function is approximately <strong>${avgRate.toFixed(5)}</strong>. This corresponds to the slope of the secant line connecting the points on the graph at the interval’s endpoints.`;
   }
 
-  // Sample large domain for function to allow full zoom/pan
   function sampleFunctionLargeDomain(compiledFn, domainStart, domainEnd){
     const xs = linspace(domainStart, domainEnd, 1000);
     const ys = evaluateFunction(compiledFn, xs);
     return { xs, ys };
   }
 
-  // Main plot function
   function plotFunction() {
     const funcExpr = funcInput.value.trim();
     if (!funcExpr) {
@@ -307,10 +328,7 @@
       return;
     }
     const { compiledFn, compiledDer } = compiled;
-
-    // Define big domain centered around user's point or interval or 20 units default
     let domainStart, domainEnd;
-
     if (averageMode) {
       let intervalStart = parseFloat(intervalStartInput.value);
       let intervalEnd = parseFloat(intervalEndInput.value);
@@ -329,10 +347,7 @@
       domainStart = xPoint - 10;
       domainEnd = xPoint + 10;
     }
-
     const { xs, ys } = sampleFunctionLargeDomain(compiledFn, domainStart, domainEnd);
-
-    // Plot base function trace
     const traces = [{
       x: xs, y: ys,
       mode: 'lines',
@@ -341,12 +356,9 @@
       hoverinfo: 'x+y',
       hoverlabel: { namelength: 0 }
     }];
-
     if (averageMode) {
-      // Plot average rate of change (secant) line
       const intervalStart = parseFloat(intervalStartInput.value);
       const intervalEnd = parseFloat(intervalEndInput.value);
-
       let fa, fb;
       try {
         fa = compiledFn.evaluate({ x: intervalStart });
@@ -357,11 +369,8 @@
         return;
       }
       const avgRate = (fb - fa) / (intervalEnd - intervalStart);
-
-      // Secant line points
       const secX = linspace(intervalStart, intervalEnd, 100);
       const secY = secX.map(x => avgRate * (x - intervalStart) + fa);
-
       traces.push({
         x: secX, y: secY,
         mode: 'lines',
@@ -378,12 +387,10 @@
         marker: { color: '#2ca02c', size: 8 },
         hoverinfo: 'x+y'
       });
-
       avgSummary.innerHTML = `<h3>Average Rate of Change</h3><p>${makeAverageSummary(intervalStart, intervalEnd, avgRate)}</p>`;
       avgSummary.hidden = false;
       instSummary.hidden = true;
     } else {
-      // Plot instantaneous rate of change (tangent) line
       const xPoint = parseFloat(pointInput.value);
       let yPoint, slopeAtPoint;
       try {
@@ -394,12 +401,9 @@
         alert('Could not evaluate function or derivative at the given point.');
         return;
       }
-
-      // Tangent line (small segment around xPoint)
       const tanSpan = (domainEnd - domainStart) * 0.15;
       const tanX = linspace(xPoint - tanSpan/2, xPoint + tanSpan/2, 100);
       const tanY = tanX.map(x => slopeAtPoint * (x - xPoint) + yPoint);
-
       traces.push({
         x: tanX, y: tanY,
         mode: 'lines',
@@ -415,12 +419,10 @@
         marker: { color: '#d62728', size: 8 },
         hoverinfo: 'x+y'
       });
-
       instSummary.innerHTML = `<h3>Instantaneous Rate of Change</h3><p>${makeInstantaneousSummary(xPoint, slopeAtPoint)}</p>`;
       instSummary.hidden = false;
       avgSummary.hidden = true;
     }
-
     const layout = {
       title: {
         text: `Graph of f(x) and ${averageMode ? 'Secant (Average Rate)' : 'Tangent (Instantaneous Rate)'} Line`,
@@ -462,7 +464,6 @@
       autosize: true,
       annotations: []
     };
-
     Plotly.newPlot(plotDiv, traces, layout, { responsive: true, displayModeBar: true });
   }
 
@@ -479,14 +480,12 @@
     }
   });
 
-  // Accessibility: Enter key triggers Plot button
   [funcInput, pointInput, intervalStartInput, intervalEndInput].forEach(input => {
     input.addEventListener('keypress', e => {
       if (e.key === 'Enter') plotBtn.click();
     });
   });
 
-  // Initialize values and plot default (instantaneous)
   funcInput.value = 'x^3 - 3*x + 1';
   pointInput.value = '1';
   intervalStartInput.value = '0';
