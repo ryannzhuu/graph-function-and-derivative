@@ -13,23 +13,13 @@
   body {
     margin: 0; font-family: Arial, sans-serif; color: #222;
     display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-    background: repeating-linear-gradient(
-      to bottom,
-      red 0, red 14.2857%,
-      orange 14.2857%, orange 28.5714%,
-      yellow 28.5714%, yellow 42.8571%,
-      green 42.8571%, green 57.1428%,
-      blue 57.1428%, blue 71.4285%,
-      indigo 71.4285%, indigo 85.7142%,
-      violet 85.7142%, violet 100%
-    );
+    background-color: #e63946; /* solid light red - color of passion */
   }
   header {
     margin: 20px 0 10px;
     font-weight: bold; font-size: 1.4rem;
-    color: #111;
-    text-shadow:
-      1px 1px 2px rgba(255 255 255 / 0.8);
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
   }
   #input-area {
     display: flex;
@@ -50,14 +40,14 @@
     font-weight: 600;
     margin-bottom: 0.3rem;
   }
-  input[type=text], input[type=number] {
+  input[type=text], input[type=number], select {
     padding: 0.3rem 0.5rem;
     font-size: 1rem;
     border: 1px solid #bbb;
     border-radius: 4px;
   }
   button {
-    background-color: #2a9df4;
+    background-color: #1b262c;
     border: none;
     color: white;
     font-weight: 600;
@@ -68,11 +58,11 @@
     height: fit-content;
     align-self: center;
     margin-top: auto;
-    box-shadow: 0 2px 5px rgba(42, 157, 244, 0.6);
+    box-shadow: 0 2px 5px rgba(27, 38, 44, 0.7);
     transition: background-color 0.25s ease;
   }
   button:hover {
-    background-color: #2380d6;
+    background-color: #0f1a20;
   }
   main {
     display: flex;
@@ -81,7 +71,7 @@
     max-width: 1200px;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
   }
   #summary-container {
     max-width: 250px;
@@ -115,6 +105,46 @@
     border-radius: 8px;
     box-shadow: 0 0 12px rgb(0 0 0 / 0.1);
   }
+  /* Below the main flex layout, a full-width container for derivative rules with scroll */
+  #rules-container {
+    max-width: 1000px;
+    width: 95vw;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgb(0 0 0 / 0.15);
+    margin: 2rem auto 3rem;
+    padding: 20px 25px;
+    color: #222;
+    line-height: 1.5;
+  }
+  #rules-container h2 {
+    margin-top: 0;
+    color: #1b262c;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .formula-box {
+    border: 2px solid #1b262c;
+    border-radius: 6px;
+    padding: 15px 20px;
+    margin-bottom: 18px;
+    background: #f1f6f9;
+  }
+  .formula-box h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #141b1f;
+  }
+  .formula-box pre {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1rem;
+    margin: 0;
+    background: #dbe9f4;
+    border-radius: 4px;
+    padding: 10px 12px;
+    overflow-x: auto;
+  }
   @media (max-width: 950px) {
     main {
       flex-direction: column;
@@ -137,6 +167,10 @@
     }
     #input-area {
       max-width: 90vw;
+    }
+    #rules-container {
+      width: 90vw;
+      padding: 16px 18px;
     }
   }
 </style>
@@ -167,6 +201,22 @@
     <input type="number" id="interval-end" step="any" placeholder="e.g. 2" />
   </div>
 
+  <div class="input-group">
+    <label for="xscale">X-axis Scale</label>
+    <select id="xscale" aria-label="Select scale for x-axis">
+      <option value="linear" selected>Linear</option>
+      <option value="log">Logarithmic</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label for="yscale">Y-axis Scale</label>
+    <select id="yscale" aria-label="Select scale for y-axis">
+      <option value="linear" selected>Linear</option>
+      <option value="log">Logarithmic</option>
+    </select>
+  </div>
+
   <button id="plot-button" aria-label="Plot the function and rates of change">Plot</button>
 </div>
 
@@ -185,6 +235,42 @@
   <div id="plot" role="img" aria-label="Graph of the function and tangent and secant lines"></div>
 </main>
 
+<div id="rules-container" tabindex="0" aria-label="Derivative rules and formulas">
+  <h2>How to Find Derivatives: Key Rules & Formulas</h2>
+
+  <div class="formula-box">
+    <h3>Chain Rule</h3>
+    <pre> If \( f(x) = h(g(x)) \), then
+\( f'(x) = h'(g(x)) \times g'(x) \)</pre>
+  </div>
+  
+  <div class="formula-box">
+    <h3>Product Rule</h3>
+    <pre> If \( f(x) = u(x) \times v(x) \), then
+\( f'(x) = u'(x) \times v(x) + u(x) \times v'(x) \)</pre>
+  </div>
+
+  <div class="formula-box">
+    <h3>Quotient Rule</h3>
+    <pre> If \( f(x) = \frac{u(x)}{v(x)} \), then
+\( f'(x) = \frac{u'(x) \times v(x) - u(x) \times v'(x)}{[v(x)]^2} \)</pre>
+  </div>
+
+  <div class="formula-box">
+    <h3>Average Rate of Change Formula</h3>
+    <pre> Average Rate of Change = \(\frac{f(b) - f(a)}{b - a}\)</pre>
+  </div>
+
+  <div class="formula-box">
+    <h3>Tangent Line Equation (Point-Slope Form)</h3>
+    <pre> \( y = y_1 + m (x - x_1) \)
+<br>where:
+<br> \( y_1 = f(x_1) \) (point on the function)
+<br> \( m = f'(x_1) \) (derivative/slope at that point)
+</pre>
+  </div>
+</div>
+
 <script>
 (() => {
   const plotDiv = document.getElementById('plot');
@@ -195,10 +281,8 @@
   const plotBtn = document.getElementById('plot-button');
   const instSummary = document.getElementById('instantaneous-summary');
   const avgSummary = document.getElementById('average-summary');
-
-  // Pre-compile to avoid repeat compilation overhead.
-  let compiledFunction = null;
-  let compiledDerivative = null;
+  const xScaleSelect = document.getElementById('xscale');
+  const yScaleSelect = document.getElementById('yscale');
 
   // Utility: safely parse user function into mathjs expression and derivative
   function compileFunction(expr) {
@@ -213,13 +297,23 @@
     }
   }
 
-  // Generate x array with N points from start to end inclusive
-  function linspace(start, end, N) {
-    if (N <= 1) return [start];
-    const step = (end - start) / (N - 1);
+  // Generate x array with N points over given domain (log scale supported)
+  function linspace(start, end, N, scale='linear') {
     const arr = [];
-    for (let i = 0; i < N; i++) {
-      arr.push(start + i * step);
+    if (scale === 'log') {
+      if (start <= 0 || end <= 0) return null; // log scale domain must be positive
+      const logStart = Math.log10(start);
+      const logEnd = Math.log10(end);
+      const step = (logEnd - logStart) / (N - 1);
+      for (let i = 0; i < N; i++) {
+        arr.push(Math.pow(10, logStart + i * step));
+      }
+    } else {
+      if (N <= 1) return [start];
+      const step = (end - start) / (N - 1);
+      for (let i = 0; i < N; i++) {
+        arr.push(start + i * step);
+      }
     }
     return arr;
   }
@@ -254,6 +348,23 @@
     return `Over the interval [${x1.toFixed(4)}, ${x2.toFixed(4)}], the average rate of change of the function is approximately <strong>${avgRate.toFixed(5)}</strong>. This corresponds to the slope of the secant line connecting the points on the graph at the interval’s endpoints.`;
   }
 
+  // Find suitable x domain for plotting over a large span, by sampling function smartly
+  function findFullDomain(compiledFn, domainStart, domainEnd, scale) {
+    let xs;
+    let ys;
+    if (scale === 'log') {
+      if (domainStart <= 0) domainStart = 0.01; // minimal positive value
+      if (domainEnd <= 0) domainEnd = domainStart * 10;
+      xs = linspace(domainStart, domainEnd, 1000, 'log');
+      if (!xs) return null;
+      ys = evaluateFunction(compiledFn, xs);
+    } else {
+      xs = linspace(domainStart, domainEnd, 1000, 'linear');
+      ys = evaluateFunction(compiledFn, xs);
+    }
+    return { xs, ys };
+  }
+
   // Main plot function
   function plotFunction() {
     const funcExpr = funcInput.value.trim();
@@ -267,9 +378,12 @@
       return;
     }
 
-    const intervalStart = parseFloat(intervalStartInput.value);
-    const intervalEnd = parseFloat(intervalEndInput.value);
+    let intervalStart = parseFloat(intervalStartInput.value);
+    let intervalEnd = parseFloat(intervalEndInput.value);
     const hasValidInterval = validInterval(intervalStart, intervalEnd);
+
+    const xScale = xScaleSelect.value;
+    const yScale = yScaleSelect.value;
 
     // Compile the user function and its derivative
     const compiled = compileFunction(funcExpr);
@@ -279,26 +393,36 @@
     }
     const { compiledFn, compiledDer } = compiled;
 
-    // Prepare x-range for plotting the function:
-    // Choose a window centered around the user point or interval
-    // Use 500 points for smoothness
-    // Find visible x-range:
-    let xMin, xMax;
+    // Determine plotting domain
+    // Because user function can be over an infinite domain,
+    // we pick a large default domain or user interval extended by factors,
+    // Also ensure domain is valid for log scale
+    let domainStart, domainEnd;
     if (hasValidInterval) {
-      xMin = Math.min(intervalStart, intervalEnd);
-      xMax = Math.max(intervalStart, intervalEnd);
+      domainStart = Math.min(intervalStart, intervalEnd);
+      domainEnd = Math.max(intervalStart, intervalEnd);
     } else {
-      xMin = xPoint - 5;
-      xMax = xPoint + 5;
+      domainStart = xPoint - 10;
+      domainEnd = xPoint + 10;
     }
 
-    // Extend domain a bit
-    const domainExtra = (xMax - xMin) * 0.15;
-    xMin -= domainExtra;
-    xMax += domainExtra;
+    // If log scale on x, domain must be positive and start < end
+    if (xScale === 'log') {
+      if (domainStart <= 0) {
+        domainStart = 0.01;
+      }
+      if (domainEnd <= domainStart) {
+        domainEnd = domainStart * 10;
+      }
+    }
 
-    const xs = linspace(xMin, xMax, 500);
-    const ys = evaluateFunction(compiledFn, xs);
+    // Sample full function in domain
+    const fullSample = findFullDomain(compiledFn, domainStart, domainEnd, xScale);
+    if (!fullSample) {
+      alert('Domain not valid for logarithmic scale.');
+      return;
+    }
+    const { xs, ys } = fullSample;
 
     // Calculate y at xPoint and derivative there
     let yPoint, slopeAtPoint;
@@ -311,17 +435,24 @@
       slopeAtPoint = NaN;
     }
 
-    // Prepare tangent line data at xPoint (for plotting a line segment centered at xPoint)
-    // We pick a small segment in x around xPoint for tangent
-    const tanSpan = (xMax - xMin) * 0.15;
-    const tanX = linspace(xPoint - tanSpan / 2, xPoint + tanSpan / 2, 100);
+    // Prepare tangent line data at xPoint
+    const domainSpan = domainEnd - domainStart;
+    const tanSpan = domainSpan * 0.15;
+    let tanXStart = xPoint - tanSpan / 2;
+    let tanXEnd = xPoint + tanSpan / 2;
+
+    if (xScale === 'log') {
+      if (tanXStart <= 0) tanXStart = 0.01;
+      if (tanXEnd <= tanXStart) tanXEnd = tanXStart * 1.1;
+    }
+
+    const tanX = linspace(tanXStart, tanXEnd, 100, xScale);
     const tanY = tanX.map(x => slopeAtPoint * (x - xPoint) + yPoint);
 
-    // Average rate of change calculation and secant line plot if interval valid:
+    // Average rate of change and secant line plot if interval valid
     let avgRate = NaN;
     let secX = [], secY = [];
     if (hasValidInterval) {
-      // Calculate average rate: [f(b) - f(a)] / (b - a)
       let fa, fb;
       try {
         fa = compiledFn.evaluate({ x: intervalStart });
@@ -335,8 +466,7 @@
         avgRate = NaN;
       } else {
         avgRate = (fb - fa) / (intervalEnd - intervalStart);
-        // Secant line points between intervalStart and intervalEnd
-        secX = linspace(intervalStart, intervalEnd, 100);
+        secX = linspace(intervalStart, intervalEnd, 100, xScale);
         secY = secX.map(x => avgRate * (x - intervalStart) + fa);
       }
     }
@@ -348,7 +478,7 @@
     else
       avgSummary.innerHTML = `<h3>Average Rate of Change</h3><p>Enter a valid interval and click Plot to see average rate of change.</p>`;
 
-    // Plot all traces:
+    // Plot traces
     const traces = [
       {
         x: xs, y: ys,
@@ -356,7 +486,8 @@
         name: 'f(x)',
         line: { color: '#1f77b4' },
         hoverinfo: 'x+y',
-        hoverlabel: { namelength: 0 }
+        hoverlabel: { namelength: 0 },
+        connectgaps: false
       },
       {
         x: tanX, y: tanY,
@@ -366,7 +497,6 @@
         hoverinfo: 'x+y',
         hoverlabel: { namelength: 0 }
       },
-      // Reference point dot for tangent
       {
         x: [xPoint], y: [yPoint],
         mode: 'markers',
@@ -386,7 +516,6 @@
           hoverinfo: 'x+y',
           hoverlabel: { namelength: 0 }
         },
-        // Reference points for secant line at interval ends
         {
           x: [intervalStart, intervalEnd],
           y: [compiledFn.evaluate({ x: intervalStart }), compiledFn.evaluate({ x: intervalEnd })],
@@ -411,35 +540,37 @@
         zeroline: true,
         zerolinewidth: 1,
         zerolinecolor: '#bbb',
-        showspikes:true,
+        showspikes: true,
         spikecolor: '#bbb',
         spikemode: 'across',
         spikesnap: 'cursor',
         showline: true,
         linewidth: 1,
         mirror: true,
+        type: xScale,
+        autorange: true,
       },
       yaxis: {
         title: 'f(x)',
         zeroline: true,
         zerolinewidth: 1,
         zerolinecolor: '#bbb',
-        showspikes:true,
+        showspikes: true,
         spikecolor: '#bbb',
         spikemode: 'across',
         spikesnap: 'cursor',
         showline: true,
         linewidth: 1,
         mirror: true,
+        type: yScale,
+        autorange: true,
       },
       hovermode: 'x unified',
       height: 480,
       autosize: true,
-      // Add annotations to label tangent and secant lines:
       annotations: []
     };
 
-    // Add tangent annotation
     if (!isNaN(slopeAtPoint) && isFinite(yPoint)) {
       layout.annotations.push({
         x: xPoint,
@@ -462,7 +593,6 @@
       });
     }
     if (hasValidInterval && !isNaN(avgRate)) {
-      // Label secant line near mid interval
       const midX = (intervalStart + intervalEnd) / 2;
       const midY = avgRate * (midX - intervalStart) + compiledFn.evaluate({ x: intervalStart });
       layout.annotations.push({
@@ -498,7 +628,7 @@
   });
 
   // Accessibility: Enter key on input fields triggers plot
-  [funcInput, pointInput, intervalStartInput, intervalEndInput].forEach(input => {
+  [funcInput, pointInput, intervalStartInput, intervalEndInput, xScaleSelect, yScaleSelect].forEach(input => {
     input.addEventListener('keypress', e => {
       if (e.key === 'Enter') {
         plotBtn.click();
