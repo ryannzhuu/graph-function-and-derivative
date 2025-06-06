@@ -23,21 +23,20 @@
   }
   #input-area {
   display: flex;
-  flex-direction: column; /* Change to column for vertical alignment */
   gap: 1rem;
   margin-bottom: 1rem;
+  justify-content: center;
   max-width: 900px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 8px;
   padding: 12px 16px;
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
-  align-items: stretch; /* Ensure input groups stretch to full width */
+  align-items: center; /* Center align items vertically */
 }
 
 .input-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%; /* Set width to 100% for consistent alignment */
+  flex: 1; /* Allow input groups to grow equally */
+  min-width: 150px; /* Minimum width for responsiveness */
 }
   label {
     font-weight: 600;
